@@ -82,4 +82,32 @@ public class BookingController(IBookingService bookingService) : ControllerBase
 
         return Ok(ApiResponse<PaginationResponse<IEnumerable<InfoBooking>>>.Succes(null, res));
     }
+
+    [HttpGet("get-info-current-day")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetInfoBookingCurrentDay([FromQuery] BookingsFilter filter, [FromQuery] int day)
+    {
+        PaginationResponse<IEnumerable<InfoBooking>>? res =
+        bookingService.GetInfoBookingCurrentDay(filter, day);
+
+        if (res is null)
+            return NotFound(ApiResponse<PaginationResponse<IEnumerable<InfoBooking>>>.Fail(null, res));
+
+        return Ok(ApiResponse<PaginationResponse<IEnumerable<InfoBooking>>>.Succes(null, res));
+    }
+
+    [HttpGet("get-info-city-count-client")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetCountryAndCountClient([FromQuery] BookingsFilter filter)
+    {
+        PaginationResponse<IEnumerable<GetCountryAndCountClient>>? res =
+        bookingService.GetCountryAndCountClient(filter);
+
+        if (res is null)
+            return NotFound(ApiResponse<PaginationResponse<IEnumerable<GetCountryAndCountClient>>>.Fail(null, res));
+
+        return Ok(ApiResponse<PaginationResponse<IEnumerable<GetCountryAndCountClient>>>.Succes(null, res));
+    }
 }

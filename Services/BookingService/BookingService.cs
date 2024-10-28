@@ -147,4 +147,55 @@ public class BookingService(AppDbContext context) : IBookingService
         return PaginationResponse<IEnumerable<InfoBooking>>
         .Create(filter.PageNumber, filter.PageSize, totalRecords, bookingInfo);
     }
+
+    public PaginationResponse<IEnumerable<InfoBooking>> GetInfoBookingCurrentDay(BookingsFilter filter, int day)
+    {
+        IQueryable<InfoBooking> bookingInfo =
+        from m in context.UserMasters
+        join b in context.Bookings on m.Id equals b.MasterId
+        join c in context.UserClients on b.ClientId equals c.Id
+        where m.IsDeleted == false && b.IsDeleted == false && c.IsDeleted == false
+        && b.BookingDate.Day == day
+        select new InfoBooking()
+        {
+            Id = b.Id,
+            ClientId = c.Id,
+            FullNameClient = c.FirstName + " " + c.LastName,
+            MasterId = m.Id,
+            FullNameMaster = m.FirstName + " " + m.LastName,
+            DateBooking = b.BookingDate,
+            StartTime = b.StartTime,
+            EndTime = b.EndTime
+
+        };
+
+        if (bookingInfo is null)
+            return null!;
+
+        int totalRecords = bookingInfo.Count();
+
+        return PaginationResponse<IEnumerable<InfoBooking>>
+        .Create(filter.PageNumber, filter.PageSize, totalRecords, bookingInfo);
+    }
+
+    public PaginationResponse<IEnumerable<GetCountryAndCountClient>> GetCountryAndCountClient(BookingsFilter filter)
+    {
+        IQueryable<GetCountryAndCountClient> res =
+        from b in context.Bookings
+        join c in context.UserClients on b.ClientId equals c.Id
+        join city in context.Cities on c.CityId equals city.Id
+        group c by city.CityName into g
+        select new GetCountryAndCountClient()
+        {
+            CityName = g.Key,
+            CountBooking = g.Count()
+        };
+
+        if (res is null)
+            return null!;
+
+        int totalRecords = res.Count();
+
+        return PaginationResponse<IEnumerable<GetCountryAndCountClient>>.Create(filter.PageNumber, filter.PageSize, totalRecords, res);
+    }
 }

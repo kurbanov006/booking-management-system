@@ -45,3 +45,8 @@ public readonly record struct InfoBooking(
     DateTime StartTime,
     DateTime EndTime
 );
+
+public readonly record struct GetCountryAndCountClient(
+    string CityName,
+    int CountBooking
+);

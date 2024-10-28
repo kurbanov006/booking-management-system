@@ -6,4 +6,6 @@ public interface IBookingService
     Task<BookingReadInfo?> GetById(int id);
     PaginationResponse<IEnumerable<BookingReadInfo>>? GetAll(BookingsFilter filter);
     PaginationResponse<IEnumerable<InfoBooking>> GetAllInfoBooking(BookingsFilter filter);
+    PaginationResponse<IEnumerable<InfoBooking>> GetInfoBookingCurrentDay(BookingsFilter filter, int day);
+    PaginationResponse<IEnumerable<GetCountryAndCountClient>> GetCountryAndCountClient(BookingsFilter filter);
 }
