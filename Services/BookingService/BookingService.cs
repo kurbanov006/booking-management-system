@@ -181,15 +181,15 @@ public class BookingService(AppDbContext context) : IBookingService
     public PaginationResponse<IEnumerable<GetCountryAndCountClient>> GetCountryAndCountClient(BookingsFilter filter)
     {
         IQueryable<GetCountryAndCountClient> res =
-        from b in context.Bookings
-        join c in context.UserClients on b.ClientId equals c.Id
-        join city in context.Cities on c.CityId equals city.Id
-        group c by city.CityName into g
-        select new GetCountryAndCountClient()
-        {
-            CityName = g.Key,
-            CountBooking = g.Count()
-        };
+        (from b in context.Bookings
+         join c in context.UserClients on b.ClientId equals c.Id
+         join city in context.Cities on c.CityId equals city.Id
+         group c by city.CityName into g
+         select new GetCountryAndCountClient()
+         {
+             CityName = g.Key,
+             CountBooking = g.Count()
+         }).OrderByDescending(x => x.CountBooking);
 
         if (res is null)
             return null!;
